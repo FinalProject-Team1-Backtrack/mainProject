@@ -9,7 +9,7 @@ using UnityEngine;
 using Quaternion = System.Numerics.Quaternion;
 using Vector3 = UnityEngine.Vector3;
 
-public class PlayerMotor : MonoBehaviour
+public class PlayerMotorAcc : MonoBehaviour
 {
     private float speedConstant = 100f;
     
@@ -67,27 +67,18 @@ public class PlayerMotor : MonoBehaviour
         
         canMove = false;
         if(_rigidBody == null) Debug.LogError("未找到RigidBody");
-
-        _rigidBody.isKinematic = true;
-
+        
     }
 
     public void MoveForward()
     {
-        var dir = transform.InverseTransformDirection(_rigidBody.velocity);
-        var curZSpeed = dir.z;
-        if (curZSpeed < Zspeed * Time.deltaTime * speedConstant)
-        {
-            _nextMoveZVelocity = transform.forward * Zspeed * Time.deltaTime * speedConstant;
+        // var dir = transform.InverseTransformDirection(_rigidBody.velocity);
+        // var curZSpeed = dir.z;
+        // if (curZSpeed < Zspeed * Time.deltaTime * speedConstant)
+        // {
+        // }
+        _nextMoveZVelocity = transform.forward * Zspeed * Time.deltaTime;
 
-        }
-        else
-        {
-            dir.x = 0;
-            dir.y = 0;
-            var curV = transform.TransformDirection(dir);
-            _nextMoveZVelocity = curV;
-        }
     }
 
     public void MoveHorizontal(float dir)
@@ -108,7 +99,7 @@ public class PlayerMotor : MonoBehaviour
            pos  =  transform.right * dir;
 
         }
-        _nextMoveXVelocity = pos * Xspeed * Time.deltaTime * speedConstant;
+        _nextMoveXVelocity = pos * Xspeed * Time.deltaTime;
 
     }
 
@@ -116,38 +107,21 @@ public class PlayerMotor : MonoBehaviour
     {
         if (canMove)
         {
-            Vector3 velBeforeSlope = (_nextMoveXVelocity + _nextMoveZVelocity);
+            Vector3 velBeforeSlope = (_nextMoveXVelocity + _nextMoveZVelocity) * speedConstant;
         
             Vector3 velAfterSlope = velBeforeSlope;
             RaycastHit hit;
-            if (IsOnSlope(out hit))
-            {
-                var dot = Vector3.Dot(hit.normal, transform.forward);
-                //判断是不是在上坡
-                 //if (dot < 0f)
-                 //{
-                      //velAfterSlope = Vector3.ProjectOnPlane(velBeforeSlope, hit.normal);
-                
-                 //}else 
-                 //{
-                     //velAfterSlope.y = _rigidBody.velocity.y;
-                     
-                //}
+            // if (IsOnSlope(out hit))
+            // {
+            //     velAfterSlope = Vector3.ProjectOnPlane(velBeforeSlope, hit.normal);
+            // }
+            // else
+            // {
+            //     velAfterSlope.y = _rigidBody.velocity.y;
+            // }
 
-                if (dot > 0f)
-                {
-                    //velAfterSlope = Vector3.ProjectOnPlane(velBeforeSlope, hit.normal);
-                    velAfterSlope.y = _rigidBody.velocity.y;
+            _rigidBody.AddForce(velAfterSlope, ForceMode.VelocityChange);
 
-                }
-
-            }
-            else
-            {
-                velAfterSlope.y = _rigidBody.velocity.y;
-            }
-            _rigidBody.velocity = velAfterSlope;
-            
         }
 
     }
@@ -160,23 +134,11 @@ public class PlayerMotor : MonoBehaviour
         _currentSpeed = locVel.z;
 
         RotateInFixedUpdate();
-        //addExtraInitialGravity();
     }
 
-    public float extraGravity = 15f;
-    //想加一点重力，但是没啥效果
-    void addExtraInitialGravity()
-    {
-        if (isOneTimeFalling())
-        {
-            _rigidBody.AddForce(transform.up * -1 * extraGravity * speedConstant);
-        }
-    }
     public void MotorStart()
     {
         canMove = true;
-        _rigidBody.isKinematic = false;
-
     }
 
     public void JumpVertical()
@@ -188,41 +150,9 @@ public class PlayerMotor : MonoBehaviour
         }
     }
 
-    public bool IsFalling()
-    {
-        bool falling;
-        if (_rigidBody.velocity.y < -0.2f)
-        {
-            falling = true;
-        }
-        else
-        {
-            falling = false;
-        }
-
-        return falling;
-    }
-
-    private bool isOneTimeFall = false;
-    public bool isOneTimeFalling()
-    {
-        //if (!IsGrounded() && isOneTimeFall)
-        if(IsFalling() && isOneTimeFall)
-        {
-            isOneTimeFall = false;
-            return true;
-        }
-
-        if (IsGrounded())
-        {
-            isOneTimeFall = true;
-        }
-
-        return false;
-    }
     public bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, Vector3.down, _collider.bounds.extents.y + 0.2f,groundLayer);
+        return Physics.Raycast(transform.position, Vector3.down, _collider.bounds.extents.y + 0.1f,groundLayer);
     }
 
     private bool IsOnSlope(out RaycastHit hit)//检测是否在斜坡上
