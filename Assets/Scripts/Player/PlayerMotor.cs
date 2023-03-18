@@ -13,11 +13,11 @@ public class PlayerMotor : MonoBehaviour
 {
     private float speedConstant = 100f;
     
-    private Rigidbody _rigidBody;
-    private Collider _collider;
+    protected Rigidbody _rigidBody;
+    protected Collider _collider;
 
-    private Vector3 _nextMoveXVelocity;
-    private Vector3 _nextMoveZVelocity;
+    protected Vector3 _nextMoveXVelocity;
+    protected Vector3 _nextMoveZVelocity;
     #region 外部访问属性
     private float _currentSpeed;
     public float CurrentSpeed
@@ -56,9 +56,9 @@ public class PlayerMotor : MonoBehaviour
     #endregion
     
     #region 布尔变量，motor状态
-    private bool canMove = false; //是否可以移动（包括跳跃） 移动的总控制
-    private bool canMoveRight = true; //是否可以像左移动
-    private bool canMoveLeft = true; //是否可以像右移动
+    protected bool canMove = false; //是否可以移动（包括跳跃） 移动的总控制
+    protected bool canMoveRight = true; //是否可以像左移动
+    protected bool canMoveLeft = true; //是否可以像右移动
     #endregion
     private void Awake()
     {
@@ -112,7 +112,7 @@ public class PlayerMotor : MonoBehaviour
 
     }
 
-    public void Move()
+    public virtual void Move()
     {
         if (canMove)
         {
@@ -220,12 +220,12 @@ public class PlayerMotor : MonoBehaviour
 
         return false;
     }
-    public bool IsGrounded()
+    protected bool IsGrounded()
     {
         return Physics.Raycast(transform.position, Vector3.down, _collider.bounds.extents.y + 0.2f,groundLayer);
     }
 
-    private bool IsOnSlope(out RaycastHit hit)//检测是否在斜坡上
+    protected bool IsOnSlope(out RaycastHit hit)//检测是否在斜坡上
     {
         
         if (Physics.Raycast(
