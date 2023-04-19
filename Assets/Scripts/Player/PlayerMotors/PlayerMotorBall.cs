@@ -14,6 +14,8 @@ public class PlayerMotorBall : PlayerMotor
     {
         base.Init();
         _sphereCollider = GetComponent<SphereCollider>();
+        
+        
     }
 
     public override void Move()

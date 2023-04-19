@@ -11,6 +11,7 @@ public class CameraController : MonoSingleton<CameraController>
     [HideInInspector] public Transform vcam2;
     [HideInInspector] public CinemachineVirtualCamera vcam1CM;
     [HideInInspector] public CinemachineVirtualCamera vcam2CM;
+    public Transform curVcam;
     private void Awake()
     {
         vcam1 = this.transform.Find("CM vcam1");
@@ -21,6 +22,7 @@ public class CameraController : MonoSingleton<CameraController>
         vcam1CM = vcam1.GetComponent<CinemachineVirtualCamera>();
         vcam2CM = vcam2.GetComponent<CinemachineVirtualCamera>();//获取vcam2的CinemachineVirtualCamera组件
         Transform lookAtPoint = PlayerController.Instance.transform.Find("LookAtPoint");
+        Transform playerParent = PlayerController.Instance.transform.parent;
         if(lookAtPoint == null) Debug.LogError("Player里没有LookAtPoint，摄像机无法跟踪");
         vcam1CM.Follow = lookAtPoint;
         vcam1CM.LookAt = lookAtPoint;
@@ -31,6 +33,8 @@ public class CameraController : MonoSingleton<CameraController>
         CinemachineTransposer transposer1 = vcam1CM.GetCinemachineComponent<CinemachineTransposer>();//获取vcam1的transposer组件
         CinemachineTransposer transposer2 = vcam2CM.GetCinemachineComponent<CinemachineTransposer>();
         transposer2.m_FollowOffset = transposer1.m_FollowOffset;
+
+        curVcam = vcam1;
     }
 
     // Update is called once per frame

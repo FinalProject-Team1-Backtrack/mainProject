@@ -68,7 +68,11 @@ public class PlayerMotor : MonoBehaviour
     [SerializeField] protected LayerMask groundLayer;
     [SerializeField] private float detectionLength = 0.2f;
     #endregion
-    
+    #region 边界属性
+
+    [Header("边界属性")] 
+    [SerializeField] private float deathBoundaryY = -100;
+    #endregion
     #region 布尔变量，motor状态
     protected bool canMove = false; //是否可以移动（包括跳跃） 移动的总控制
     protected bool canMoveRight = true; //是否可以像左移动
@@ -87,7 +91,14 @@ public class PlayerMotor : MonoBehaviour
         Init();
     }
 
-    
+    private void Start()
+    {
+        _rigidBody  = GetComponent<Rigidbody>();
+        if(_rigidBody == null) Debug.LogError("未找到RigidBody");
+
+    }
+
+
     //子类的Awake
     protected virtual void Init()
     {
@@ -176,6 +187,7 @@ public class PlayerMotor : MonoBehaviour
     void FixedUpdate()
     {
         CheckPathBoundary();
+        CheckDeath();
         
         var locVel = transform.InverseTransformDirection(_rigidBody.velocity);//转换为本地坐标系
         _currentYSpeed = locVel.y;
@@ -207,7 +219,7 @@ public class PlayerMotor : MonoBehaviour
         if (!canMove) return;
         if (IsGrounded())
         {
-            _rigidBody.AddForce(Vector3.up * jumpVerticalForce * speedConstant);
+            _rigidBody.AddForce(Vector3.up * jumpVerticalForce);
         }
     }
 
@@ -330,14 +342,22 @@ public class PlayerMotor : MonoBehaviour
 
     private void Update()
     {
-        //检测道路边缘
-        
+
     }
+    
+ 
 
     public virtual void CheckPathBoundary()
     {
         Debug.Log("当前物体使用PlayerMotor，所以没有边缘检测，请使用PlayerMotorBall");
     }
 
+    public void CheckDeath()
+    {
+        if (transform.position.y < deathBoundaryY )
+        {
+            EventManager.Instance.PlayerDeadEventTrigger();
+        }
+    }
 
 }
