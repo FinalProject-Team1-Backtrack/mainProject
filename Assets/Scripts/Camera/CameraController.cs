@@ -48,7 +48,7 @@ public class CameraController : MonoSingleton<CameraController>
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         if (isFixOnPath)
         {
@@ -56,7 +56,7 @@ public class CameraController : MonoSingleton<CameraController>
         }
         else
         {
-            _lookAtPoint.localPosition = Vector3.zero;
+            _lookAtPoint.localPosition = Vector3.up;
         }
     }
 
@@ -66,13 +66,17 @@ public class CameraController : MonoSingleton<CameraController>
         RaycastHit hit;
         if (_playerMotor.RayCastBottom(out hit))
         {
+            
             Transform hitTr = hit.collider.transform;
-            if (hitTr.position.x - _lookAtPoint.position.x < 5f)
-            {
-                _lookAtPoint.position = new Vector3(hitTr.position.x, _lookAtPoint.position.y, _lookAtPoint.position.z);
-            }
+            //local position
+
+            Vector3 localHitPoint = _playerTr.InverseTransformPoint(hitTr.position);
+            Debug.Log(localHitPoint);
+            _lookAtPoint.localPosition = new Vector3(localHitPoint.x, _lookAtPoint.localPosition.y, _lookAtPoint.localPosition.z);
+            
         }
         
     }
+    
 
 }
