@@ -294,8 +294,6 @@ public class PlayerMotor : MonoBehaviour
         rotate_start = true;
         rotate_curve = curve;
         //开始自转，关闭跟随道路
-        CameraController.Instance.isFixOnPath = false;
-
         // UnityEngine.Quaternion qt = UnityEngine.Quaternion.Slerp(rotate_StartPos, UnityEngine.Quaternion.Euler(rotate_StartPos.eulerAngles + rotateAngle), 0.1f);
         // transform.Rotate(qt.eulerAngles);
     }
@@ -307,7 +305,6 @@ public class PlayerMotor : MonoBehaviour
         rotate_addUpTime += Time.deltaTime / rotate_duration;
         if (rotate_addUpTime > 1f)
         {
-            CameraController.Instance.isFixOnPath = true;
             rotate_start = false;
             return;
         }
