@@ -4,14 +4,23 @@ using System.Collections.Generic;
 using Cinemachine;
 using Common;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class CameraController : MonoSingleton<CameraController>
 {
+    #region CamProperty
     [HideInInspector] public Transform vcam1;
     [HideInInspector] public Transform vcam2;
     [HideInInspector] public CinemachineVirtualCamera vcam1CM;
     [HideInInspector] public CinemachineVirtualCamera vcam2CM;
-    public Transform curVcam;
+    [HideInInspector] public Transform curVcam;
+    #endregion
+
+    [SerializeField] public bool isFixOnPath = true;
+    
+    private Transform _playerTr;
+    private PlayerMotor _playerMotor;
+    private Transform _lookAtPoint;
     private void Awake()
     {
         vcam1 = this.transform.Find("CM vcam1");
@@ -21,14 +30,15 @@ public class CameraController : MonoSingleton<CameraController>
 
         vcam1CM = vcam1.GetComponent<CinemachineVirtualCamera>();
         vcam2CM = vcam2.GetComponent<CinemachineVirtualCamera>();//获取vcam2的CinemachineVirtualCamera组件
-        Transform lookAtPoint = PlayerController.Instance.transform.Find("LookAtPoint");
-        Transform playerParent = PlayerController.Instance.transform.parent;
-        if(lookAtPoint == null) Debug.LogError("Player里没有LookAtPoint，摄像机无法跟踪");
-        vcam1CM.Follow = lookAtPoint;
-        vcam1CM.LookAt = lookAtPoint;
+        _playerTr = PlayerController.Instance.transform;
+        _lookAtPoint = _playerTr.Find("LookAtPoint");
+        _playerMotor = _playerTr.GetComponent<PlayerMotor>();
+        if(_lookAtPoint == null) Debug.LogError("Player里没有LookAtPoint，摄像机无法跟踪");
+        vcam1CM.Follow = _lookAtPoint;
+        vcam1CM.LookAt = _lookAtPoint;
         
-        vcam2CM.Follow = lookAtPoint;
-        vcam2CM.LookAt = lookAtPoint;
+        vcam2CM.Follow = _lookAtPoint;
+        vcam2CM.LookAt = _lookAtPoint;
         
         CinemachineTransposer transposer1 = vcam1CM.GetCinemachineComponent<CinemachineTransposer>();//获取vcam1的transposer组件
         CinemachineTransposer transposer2 = vcam2CM.GetCinemachineComponent<CinemachineTransposer>();
@@ -38,9 +48,31 @@ public class CameraController : MonoSingleton<CameraController>
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        if (isFixOnPath)
+        {
+            FixCameraOnPath();
+        }
+        else
+        {
+            _lookAtPoint.localPosition = Vector3.zero;
+        }
+    }
+
+    
+    void FixCameraOnPath()
+    {
+        RaycastHit hit;
+        if (_playerMotor.RayCastBottom(out hit))
+        {
+            Transform hitTr = hit.collider.transform;
+            if (hitTr.position.x - _lookAtPoint.position.x < 5f)
+            {
+                _lookAtPoint.position = new Vector3(hitTr.position.x, _lookAtPoint.position.y, _lookAtPoint.position.z);
+            }
+        }
         
     }
-    
+
 }
