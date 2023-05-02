@@ -5,16 +5,11 @@ using Common;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class AudioManager : MonoSingleton<AudioManager>
+public class AudioManager : NoDestroyMonoSingleton<AudioManager>
 {
     public List<AudioType> audioList;
 
     protected override void Init()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
-
-    private void Start()
     {
         foreach (AudioType type in audioList)
         {
@@ -29,10 +24,10 @@ public class AudioManager : MonoSingleton<AudioManager>
             {
                 type.source.outputAudioMixerGroup = type.group;
             }
-
-        }
         
+        }
     }
+
 
     public void Play(string audioName)
     {
@@ -81,8 +76,33 @@ public class AudioManager : MonoSingleton<AudioManager>
         }
 
     }
-    
-    
+
+    public string GetMusicIsPlaying()
+    {
+        foreach (var type in audioList)
+        {
+            if (type.source.isPlaying)
+            {
+                return type.name;
+            }
+        }
+
+        return null;
+    }
+    public float GetMusicTime(string aName)
+    {
+        foreach (var type in audioList)
+        {
+            if (type.name == aName)
+            {
+                return type.source.time;
+            }
+        }
+
+        return 0f;
+    }
+
+
 }
 [System.Serializable]
 public class AudioType
