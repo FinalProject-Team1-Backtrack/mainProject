@@ -10,16 +10,22 @@ public class TriggerSavePoint : TriggerBase
     protected override void enterEvent(Collider c)
     {
         string sceneName = SceneManager.GetActiveScene().name;
-        Vector3 point = this.transform.position;
+        Vector3 point = c.transform.position;
         Vector3 rotation = this.transform.rotation.eulerAngles;
         string bgmName = AudioManager.Instance.GetMusicIsPlaying();
         float time = AudioManager.Instance.GetMusicTime(bgmName);
         int scores = ScoreManager.Instance.CurrentScoreInLevel;
+
+        float speed = PlayerController.Instance.GetComponent<PlayerMotor>().ZSpeed;
+        float xspeed = PlayerController.Instance.GetComponent<PlayerMotor>().XSpeed;
+
         SavePointManager.Instance.SetSavePoint(sceneName,
             point,
             rotation,
             bgmName,
             time,
-            scores);
+            scores,
+            speed,
+            xspeed);
     }
 }

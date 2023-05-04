@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Common;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -102,6 +103,28 @@ public class AudioManager : NoDestroyMonoSingleton<AudioManager>
         return 0f;
     }
 
+    public void SetMusicTime(string mname, float mtime)
+    {
+        foreach (var type in audioList)
+        {
+            if (type.name == mname)
+            {
+                type.source.time = mtime;
+            }
+        }
+    }
+
+    public void PlayMusicAtStart()
+    {
+        if (SavePointManager.Instance.isSave)
+        {
+           
+        }
+        else
+        {
+            Play(PlayerController.Instance.levelBGM);
+        }
+    }
 
 }
 [System.Serializable]
