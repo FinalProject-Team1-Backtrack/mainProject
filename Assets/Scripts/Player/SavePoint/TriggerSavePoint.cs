@@ -11,7 +11,7 @@ public class TriggerSavePoint : TriggerBase
     {
         string sceneName = SceneManager.GetActiveScene().name;
         Vector3 point = c.transform.position;
-        Vector3 rotation = this.transform.rotation.eulerAngles;
+        Vector3 rotation = c.transform.rotation.eulerAngles;
         string bgmName = AudioManager.Instance.GetMusicIsPlaying();
         float time = AudioManager.Instance.GetMusicTime(bgmName);
         int scores = ScoreManager.Instance.CurrentScoreInLevel;

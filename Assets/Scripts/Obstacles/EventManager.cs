@@ -18,6 +18,7 @@ public class EventManager : Singleton<EventManager>
       AudioManager.Instance.StopAll();
       DOTween.Clear();
       PlayerController.Instance.GameEnd();
+      
       // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
       SavePointManager.Instance.LoadSavePoint();
       
@@ -34,7 +35,11 @@ public class EventManager : Singleton<EventManager>
       asyncLoadObject.GetComponent<AsyncLevelLoader>().StartLoadAsync(switchSceneName);
 
    }
-   
+
+   public void PlayerVictoryEventTrigger()
+   {
+      //savepoint manager clean all
+   }
    //触发音效
    //给音效一个混响效果
    //让玩家判断左右
