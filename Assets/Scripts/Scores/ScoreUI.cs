@@ -22,8 +22,5 @@ public class ScoreUI : MonoBehaviour
         if(ScoreManager.Instance != null) ScoreManager.Instance.onAfterScoreAnObj -= UpdateScore;
     }
 
-    private void OnDisable()
-    {
-        if(ScoreManager.Instance != null) ScoreManager.Instance.onAfterScoreAnObj -= UpdateScore;
-    }
+
 }
