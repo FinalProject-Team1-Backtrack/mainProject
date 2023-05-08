@@ -2,7 +2,7 @@ namespace PlayerData.ScriptableObject
 {
     using UnityEngine;
 
-    [CreateAssetMenu(fileName = "New LevelInfo", menuName = "SO/Data")]
+    [CreateAssetMenu(fileName = "New LevelInfo", menuName = "SO/LevelData")]
     public class LevelInfo_SO : ScriptableObject
     {
 
