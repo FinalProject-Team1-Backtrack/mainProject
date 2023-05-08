@@ -14,33 +14,46 @@ public class PlayerController_L3: MonoSingleton<PlayerController_L3>
 
     #region Controll Motor Public Funcs
     public void SwitchMoveMapping(EInputMapping changeToMapping) {
+
         switch (changeToMapping) {
             case EInputMapping.DISABLE:
                 A_planeMoveUpdate = null;
-                break;
+                return;
             case EInputMapping.TOPDOWN:
                 A_planeMoveUpdate = _playerMotor.TopDownMove;
                 break;
             case EInputMapping.EYELEVEL:
                 A_planeMoveUpdate = _playerMotor.EyeLevelMove;
                 break;
+            case EInputMapping.SIDEVIEW:
+                A_planeMoveUpdate = _playerMotor.SideViewMove;
+                break;
         }
     }
-
-    //TODO: write Function to help Bird localPosition back to Zero
     #endregion
 
     private void OnEnable() {
-        _inputMove = _playerInput.Player.Move;
-        _playerInput.Enable();
-
-        _playerMotor = GetComponent<PlayerMotor_L3>();
+        GameStart();
     }
     private void OnDisable() {
-        _playerInput.Disable();
+        GameEnd();
     }
+
+    public void GameStart() {
+        
+    }
+
+    public void GameEnd() {
+        A_planeMoveUpdate = null;
+        _playerMotor.MotorReset();
+    }
+
     protected override void Init() {
         _playerInput = new PlayerInput();
+        _playerInput.Enable();
+        _inputMove = _playerInput.Player.Move;
+
+        _playerMotor = GetComponent<PlayerMotor_L3>();
     }
 
     private void Update() {
