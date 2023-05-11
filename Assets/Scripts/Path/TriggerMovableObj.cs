@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 using DG.Tweening;
 using Unity.VisualScripting;
@@ -19,6 +20,12 @@ namespace Path
         [SerializeField] private bool AppearAfterTrigger;
         [SerializeField] private bool isMoveOnStart = false;
         [SerializeField] private bool isLocalMove = false;
+        
+        [SerializeField] private bool isStopAtMid = false;
+        [SerializeField] private float beforePauseTime = 1f;
+        [SerializeField] private float pauseTime = 5f;
+
+        Tween tw;
         private void Awake()
         {
             if(AppearAfterTrigger) moveObjTransform.gameObject.SetActive(false);
@@ -47,18 +54,32 @@ namespace Path
         {
             base.enterEvent();
             moveObjTransform.gameObject.SetActive(true);
+            
             if (isLocalMove)
             {
-                Tween tw = moveObjTransform.DOLocalPath(pointPos, duration, type).SetLookAt(0.01f).SetEase(easeType);
+                tw = moveObjTransform.DOLocalPath(pointPos, duration, type).SetLookAt(0.01f).SetEase(easeType);
 
             }
             else
             {
-                Tween tw = moveObjTransform.DOPath(pointPos, duration, type).SetLookAt(0.01f).SetEase(easeType);
+                tw = moveObjTransform.DOPath(pointPos, duration, type).SetLookAt(0.01f).SetEase(easeType);
 
             }
             //moveObjTransform.DOPath(pointPos,duration
+
+            if (isStopAtMid)
+            {
+                StartCoroutine(StopCount());
+            }
             
+        }
+        IEnumerator StopCount()
+        {
+            yield return new WaitForSeconds(beforePauseTime);
+            tw.timeScale = 0f;
+            yield return new WaitForSeconds(pauseTime);
+            tw.timeScale = 1f;
+
         }
 
 
