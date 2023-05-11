@@ -1,3 +1,4 @@
+using System.Linq;
 using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -14,20 +15,36 @@ namespace Path
         [SerializeField] private PathType type = PathType.CatmullRom;
         [SerializeField] private Ease easeType = DOTween.defaultEaseType;
 
+        [SerializeField] private bool AppearAfterTrigger;
+        [SerializeField] private bool isMoveOnStart = false;
+        private void Awake()
+        {
+            if(AppearAfterTrigger) moveObjTransform.gameObject.SetActive(false);
+            if(isMoveOnStart) this.GetComponent<Collider>().enabled = false;
+        }
         private void Start()
         {
             if (points.Length == 0) Debug.LogWarning(transform.name + " 未加入点，生成不了曲线");
             pointPos = new Vector3[points.Length];
             isOneTime = true;
-            for (var i = 0; i < points.Length; i++)
+            moveObjTransform.position = points[0].position;
+            for (var i = 0; i < points.Length -1; i++)
             {
-                pointPos[i] = points[i].position;
+                pointPos[i] = points[i+1].position;
+            }
+            
+            pointPos = pointPos.SkipLast(1).ToArray();
+            if (isMoveOnStart)
+            {
+                enterEvent();
+                
             }
         }
 
         protected override void enterEvent()
         {
             base.enterEvent();
+            moveObjTransform.gameObject.SetActive(true);
             Tween tw = moveObjTransform.DOPath(pointPos, duration, type).SetLookAt(0.01f).SetEase(easeType);
             
         }
