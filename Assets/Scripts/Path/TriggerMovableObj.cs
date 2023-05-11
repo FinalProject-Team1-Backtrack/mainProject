@@ -2,6 +2,7 @@ using System.Linq;
 using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEngine;
+using Quaternion = System.Numerics.Quaternion;
 
 namespace Path
 {
@@ -17,6 +18,7 @@ namespace Path
 
         [SerializeField] private bool AppearAfterTrigger;
         [SerializeField] private bool isMoveOnStart = false;
+        [SerializeField] private bool isLocalMove = false;
         private void Awake()
         {
             if(AppearAfterTrigger) moveObjTransform.gameObject.SetActive(false);
@@ -28,12 +30,12 @@ namespace Path
             pointPos = new Vector3[points.Length];
             isOneTime = true;
             moveObjTransform.position = points[0].position;
-            for (var i = 0; i < points.Length -1; i++)
+            for (var i = 0; i < points.Length ; i++)
             {
-                pointPos[i] = points[i+1].position;
+                pointPos[i] = points[i].localPosition;
             }
             
-            pointPos = pointPos.SkipLast(1).ToArray();
+            //pointPos = pointPos.SkipLast(1).ToArray();
             if (isMoveOnStart)
             {
                 enterEvent();
@@ -45,12 +47,20 @@ namespace Path
         {
             base.enterEvent();
             moveObjTransform.gameObject.SetActive(true);
-            Tween tw = moveObjTransform.DOPath(pointPos, duration, type).SetLookAt(0.01f).SetEase(easeType);
+            if (isLocalMove)
+            {
+                Tween tw = moveObjTransform.DOLocalPath(pointPos, duration, type).SetLookAt(0.01f).SetEase(easeType);
+
+            }
+            else
+            {
+                Tween tw = moveObjTransform.DOPath(pointPos, duration, type).SetLookAt(0.01f).SetEase(easeType);
+
+            }
+            //moveObjTransform.DOPath(pointPos,duration
             
         }
-        
-        
-        
+
 
     }
 }

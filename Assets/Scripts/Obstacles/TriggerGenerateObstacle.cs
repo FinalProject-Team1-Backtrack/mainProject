@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class TriggerGenerateObstacle : TriggerBase
@@ -13,7 +14,7 @@ public class TriggerGenerateObstacle : TriggerBase
     protected override void enterEvent(Collider collision)
     {
         base.enterEvent(collision);
-        Instantiate(GenerateObj, collision.transform);
+        Instantiate(GenerateObj,  PlayerControllerBase.Instance.transform.Find("ArrowGeneratePlace"));
         
         
     }
