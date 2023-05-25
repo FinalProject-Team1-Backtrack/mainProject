@@ -49,8 +49,8 @@ namespace Level3_Track {
         /// </summary>
         public void TrackSwitch() {
             if(_CurrentTrackIdx >= _TrackList.Length) {
-                Debug.Log("All Track Played successfully");
-                Debug.Break();
+                //Debug.Log("All Track Played successfully)";
+                //Debug.Break();
                 return;
             }
 
@@ -101,7 +101,7 @@ namespace Level3_Track {
         }
 
 
-        private void Awake() {
+        protected override void Init() {
             if (_TrackList == null || _TrackList.Length == 0) {
                 DebugLogger.Error(this.name, "TrackList Empty! Please Set in Editor.");
             }

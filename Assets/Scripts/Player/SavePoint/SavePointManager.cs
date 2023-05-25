@@ -86,7 +86,7 @@ public class SavePointManager : Singleton<SavePointManager>
         if (levelNum == 3)
         {
             TrackManager.Instance._CurrentTrackIdx = saveTrackId;
-            TrackManager.Instance.TrackSwitch();
+            
         }
         else
         {
